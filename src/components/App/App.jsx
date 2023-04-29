@@ -1,14 +1,21 @@
 import { theme } from "../../utils/theme";
+import { lazy } from "react";
+import { Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import MainPage from "../../pages/MainPage";
+import { SharedLayout } from "../SharedLayout/SharedLayout";
+
+const Tweets = lazy(() => import("../../pages/Tweets"));
+const Home = lazy(() => import("../../pages/Home"));
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      {/* <Routes>
-        <Route path="/" element={<MainPage />} />
-      </Routes> */}
-      <MainPage />
+      <Routes>
+        <Route path="/" element={<SharedLayout />}>
+          <Route index element={<Home />} />
+          <Route path="tweets" element={<Tweets />} />
+        </Route>
+      </Routes>
     </ThemeProvider>
   );
 }

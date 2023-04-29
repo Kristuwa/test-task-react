@@ -33,3 +33,11 @@ export const LoadMore = styled.button`
     background-color: ${(props) => props.theme.color.accentColor};
   }
 `;
+
+export const Message = styled.p`
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.2;
+  margin-top: 150px;
+  text-align: center;
+`;
