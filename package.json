@@ -1,6 +1,7 @@
 {
   "name": "test-task-react",
   "version": "0.1.0",
+  "homepage": "https://Kristuwa.github.io/test-task-react/",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
