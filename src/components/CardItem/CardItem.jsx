@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import {
   CardContainer,
   Image,
@@ -8,34 +8,15 @@ import {
   Logo,
 } from "./CardItem.styled";
 import logo from "../../img/logo.svg";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/users/usersSlice";
 
-export const CardItem = ({ tweets, avatar, followers, id }) => {
-  const [following, setFollowing] = useState(() => {
-    const storage = JSON.parse(localStorage.getItem("followingUsers"));
-    if (storage === null) {
-      return false;
-    }
-    const user = storage.find((item) => item.id === id);
-    return user ? user.following : false;
-  });
+export const CardItem = ({ following, avatar, tweets, followersCount, id }) => {
+  const dispatch = useDispatch();
 
-  const [followersCount, setFollowersCount] = useState(() => {
-    const storage = JSON.parse(localStorage.getItem("followingUsers"));
-    if (storage === null) {
-      return followers;
-    }
-    const user = storage.find((item) => item.id === id);
-    return user ? Number(user.followersCount) : followers;
-  });
-
-  const handleClickFollow = () => {
-    setFollowing((prevState) => !prevState);
-    if (!following) {
-      setFollowersCount((prevState) => Number(prevState) + 1);
-    } else {
-      setFollowersCount((prevState) => Number(prevState) - 1);
-    }
-  };
+  const handleClickFollow = useCallback(() => {
+    dispatch(updateUser(id));
+  }, [dispatch, id]);
 
   const followersString = useMemo(() => {
     if (followersCount < 1000) {
@@ -46,31 +27,6 @@ export const CardItem = ({ tweets, avatar, followers, id }) => {
         .slice(-3)}`;
     }
   }, [followersCount]);
-
-  useEffect(() => {
-    const storage = JSON.parse(localStorage.getItem("followingUsers"));
-    if (storage === null) {
-      localStorage.setItem(
-        `followingUsers`,
-        JSON.stringify([{ id, following, followersCount, tweets, avatar }])
-      );
-    } else {
-      const index = storage.findIndex((item) => item.id === id);
-      if (index === -1) {
-        storage.push({ id, following, followersCount, tweets, avatar });
-      } else {
-        storage.splice(index, 1, {
-          id,
-          following,
-          followersCount,
-          tweets,
-          avatar,
-        });
-      }
-
-      localStorage.setItem(`followingUsers`, JSON.stringify(storage));
-    }
-  }, [followersCount, following, tweets, avatar, id]);
 
   return (
     <CardContainer>

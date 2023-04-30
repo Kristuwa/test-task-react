@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CardItem } from "../components/CardItem/CardItem";
-
 import axios from "axios";
 import {
   List,
@@ -10,12 +9,15 @@ import {
   DropDownMenu,
   Button,
 } from "./Tweets.styled";
+import { useDispatch, useSelector } from "react-redux";
+import { getFilters, getUsers } from "../redux/selectors";
+import { addUsers } from "../redux/users/usersSlice";
+import { setFilter } from "../redux/filter/filtersSlice";
+import { getFollowingUsers } from "../helpers/function";
 
 const buttons = ["Show all", "Follow", "Following"];
 
-function MainPage() {
-  const [users, setUsers] = useState([]);
-  const [pages, setPages] = useState(0);
+function Tweets() {
   const [currentPage, setCurrentPage] = useState(() => {
     const storage = JSON.parse(localStorage.getItem("currentPage"));
     if (storage === null) {
@@ -23,25 +25,23 @@ function MainPage() {
     }
     return Number(storage);
   });
+  const [openMenu, setOpenMenu] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+
+  const usersList = useSelector(getUsers);
+  const select = useSelector(getFilters);
+  const totalPages = Math.ceil(usersList.length / 3);
 
   const startUserIndex = useMemo(() => (currentPage - 1) * 3, [currentPage]);
   const endUserIndex = useMemo(() => startUserIndex + 3, [startUserIndex]);
 
-  const [userList, setUsersList] = useState(() => {
-    const storage = JSON.parse(localStorage.getItem("followingUsers"));
+  const [usersOnPage, setUsersOnPage] = useState(
+    usersList.slice(0, endUserIndex)
+  );
 
-    if (storage === null) {
-      return users.slice(0, 3);
-    } else {
-      return storage;
-    }
-  });
-
-  const [openMenu, setOpenMenu] = useState(false);
-  const [select, setSelect] = useState("Show all");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  console.log("userList", userList);
+  const followingUsers = getFollowingUsers(usersOnPage, select);
 
   useEffect(() => {
     const BASE_URL = "https://644a5975a8370fb3214bd036.mockapi.io/api/v1/users";
@@ -51,19 +51,26 @@ function MainPage() {
       try {
         const result = await axios.get(BASE_URL);
         const { data } = result;
-        setUsers(data);
 
-        const totalPages = Math.ceil(data.length / 3);
-        setPages(totalPages);
+        const newData = data.map((item) => ({
+          id: item.id,
+          avatar: item.avatar,
+          tweets: item.tweets,
+          following: false,
+          followersCount: item.followers,
+        }));
+        dispatch(addUsers(newData));
+
         setLoading(false);
       } catch (error) {
         setLoading(false);
         setError(error.message);
       }
     };
-
-    getUsers();
-  }, []);
+    if (usersList.length === 0) {
+      getUsers();
+    }
+  }, [dispatch, usersList]);
 
   const handleLoadMore = useCallback(() => {
     setCurrentPage((prevPage) => prevPage + 1);
@@ -74,39 +81,31 @@ function MainPage() {
   }, []);
 
   useEffect(() => {
+    const newList = usersList.slice(startUserIndex, endUserIndex);
+
+    setUsersOnPage((prevState) => {
+      const filteredList = prevState.filter(
+        (item) => !newList.some((newItem) => newItem.id === item.id)
+      );
+
+      const combinedList = [...filteredList, ...newList];
+
+      const isSameState =
+        JSON.stringify(
+          combinedList.map((item) => item.id && item.following)
+        ) ===
+        JSON.stringify(prevState.map((item) => item.id && item.following));
+
+      return isSameState ? prevState : combinedList;
+    });
+  }, [usersList, startUserIndex, endUserIndex]);
+
+  useEffect(() => {
     localStorage.setItem("currentPage", JSON.stringify(currentPage));
   }, [currentPage]);
 
-  useEffect(() => {
-    if (currentPage >= 1) {
-      const newList = users.slice(startUserIndex, endUserIndex);
-      setUsersList((prevState) => {
-        const filteredList = prevState.filter(
-          (item) => !newList.some((newItem) => newItem.id === item.id)
-        );
-        const combinedList = [...filteredList, ...newList];
-        const isSameState =
-          JSON.stringify(combinedList.map((item) => item.id)) ===
-          JSON.stringify(prevState.map((item) => item.id));
-        return isSameState ? prevState : combinedList;
-      });
-    }
-  }, [endUserIndex, startUserIndex, users, setUsersList, currentPage]);
-
-  const filterList = useMemo(() => {
-    if (select === "Following") {
-      return userList.filter((item) => item.following === true);
-    } else if (select === "Follow") {
-      return userList.filter((item) => item.following === false);
-    } else {
-      return userList;
-    }
-  }, [select, userList]);
-
-  console.log(filterList);
-
   return (
-    <>
+    <main>
       <ButtonsContainer>
         <p>Filter :</p>
         <Button active="active" type="button" onClick={handleDropdownMenu}>
@@ -121,7 +120,7 @@ function MainPage() {
                     type="button"
                     onClick={() => {
                       handleDropdownMenu();
-                      setSelect(button);
+                      dispatch(setFilter(button));
                     }}
                   >
                     {button}
@@ -132,22 +131,23 @@ function MainPage() {
           </DropDownMenu>
         )}
       </ButtonsContainer>
-      {users.length > 0 && !error && !loading && (
+      {followingUsers.length > 0 && !error && !loading && (
         <>
           <List>
-            {filterList.length > 0 &&
-              filterList.map(({ id, user, avatar, tweets, followers }) => (
+            {followingUsers.map(
+              ({ id, following, avatar, tweets, followersCount }) => (
                 <CardItem
                   key={id}
-                  user={user}
                   avatar={avatar}
                   tweets={tweets}
-                  followers={followers}
+                  following={following}
+                  followersCount={followersCount}
                   id={id}
                 />
-              ))}
+              )
+            )}
           </List>
-          {pages > 1 && currentPage < pages && (
+          {totalPages > 1 && currentPage < totalPages && (
             <LoadMore type="button" onClick={handleLoadMore}>
               Load More
             </LoadMore>
@@ -156,8 +156,8 @@ function MainPage() {
       )}
       {!error && loading && <Message>Loading....</Message>}
       {error && !loading && <Message>{error}</Message>}
-    </>
+    </main>
   );
 }
 
-export default MainPage;
+export default Tweets;
