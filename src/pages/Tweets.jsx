@@ -20,10 +20,7 @@ const buttons = ["Show all", "Follow", "Following"];
 function Tweets() {
   const [currentPage, setCurrentPage] = useState(() => {
     const storage = JSON.parse(localStorage.getItem("currentPage"));
-    if (storage === null) {
-      return 1;
-    }
-    return Number(storage);
+    return storage === null ? 1 : Number(storage);
   });
   const [openMenu, setOpenMenu] = useState(false);
   const [loading, setLoading] = useState(false);
