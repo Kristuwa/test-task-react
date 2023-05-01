@@ -38,7 +38,11 @@ export const CardItem = ({ following, avatar, tweets, followersCount, id }) => {
       </ImageBackground>
       <Text top="top">{tweets} tweets</Text>
       <Text>{followersString} Followers</Text>
-      <Button type="button" state={following} onClick={handleClickFollow}>
+      <Button
+        type="button"
+        state={following}
+        onClick={() => handleClickFollow(id)}
+      >
         {following ? "Following" : "Follow"}
       </Button>
     </CardContainer>
