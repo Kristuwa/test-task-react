@@ -1,4 +1,7 @@
-import { ImageBackground, Logo } from "../components/CardItem/CardItem.styled";
+import {
+  ImageBackground,
+  Logo,
+} from "../../components/CardItem/CardItem.styled";
 import {
   ContainerHome,
   Title,
@@ -6,9 +9,9 @@ import {
   ImageAvatar,
   CardContainer,
 } from "./Home.styled";
-import logo from "../img/logo.svg";
-import boy from "../img/boy.png";
-import boy2x from "../img/boy@2x.png";
+import logo from "../../img/logo.svg";
+import boy from "../../img/boy.png";
+import boy2x from "../../img/boy@2x.png";
 
 const Home = () => {
   return (

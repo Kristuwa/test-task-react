@@ -1,19 +1,20 @@
 import styled from "styled-components";
 
-import bg from "../img/bg.png";
-import bg2x from "../img/bg@2x.png";
+import bg from "../../img/bg.png";
+import bg2x from "../../img/bg@2x.png";
 
 export const ContainerHome = styled.section`
   padding: 30px 15px;
 `;
 
 export const Title = styled.h1`
-  margin-bottom: 30px;
-  text-align: center;
   font-weight: 500;
   font-size: 36px;
   line-height: 1.2;
+  text-align: center;
   text-transform: uppercase;
+
+  margin-bottom: 30px;
 `;
 
 export const BottomText = styled.p`
@@ -38,7 +39,6 @@ export const CardContainer = styled.div`
 
   background: url(${bg}),
     linear-gradient(114.99deg, #471ca9 -0.99%, #5736a3 54.28%, #4b2a99 78.99%);
-
   background-position: left 36px top 28px, 100%;
   background-repeat: no-repeat;
   background-size: 308px 168px, 100%;

@@ -4,8 +4,8 @@ import { Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { SharedLayout } from "../SharedLayout/SharedLayout";
 
-const Tweets = lazy(() => import("../../pages/Tweets"));
-const Home = lazy(() => import("../../pages/Home"));
+const Tweets = lazy(() => import("../../pages/Tweets/Tweets"));
+const Home = lazy(() => import("../../pages/Home/Home"));
 
 function App() {
   return (

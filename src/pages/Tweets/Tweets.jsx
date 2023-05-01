@@ -1,21 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CardItem } from "../components/CardItem/CardItem";
+import { CardItem } from "../../components/CardItem/CardItem";
 import axios from "axios";
-import {
-  List,
-  LoadMore,
-  Message,
-  ButtonsContainer,
-  DropDownMenu,
-  Button,
-} from "./Tweets.styled";
+import { List, LoadMore, Message } from "./Tweets.styled";
 import { useDispatch, useSelector } from "react-redux";
-import { getFilters, getUsers } from "../redux/selectors";
-import { addUsers } from "../redux/users/usersSlice";
-import { setFilter } from "../redux/filter/filtersSlice";
-import { getFollowingUsers } from "../helpers/function";
+import { getFilters, getUsers } from "../../redux/selectors";
+import { addUsers } from "../../redux/users/usersSlice";
 
-const buttons = ["Show all", "Follow", "Following"];
+import { getFollowingUsers } from "../../helpers/function";
+import { DropDownMenu } from "../../components/DropDownMenu/DropDownMenu";
 
 function Tweets() {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -30,9 +22,7 @@ function Tweets() {
   const usersList = useSelector(getUsers);
   const select = useSelector(getFilters);
   const totalPages = Math.ceil(usersList.length / 3);
-
-  const startUserIndex = useMemo(() => (currentPage - 1) * 3, [currentPage]);
-  const endUserIndex = useMemo(() => startUserIndex + 3, [startUserIndex]);
+  const endUserIndex = useMemo(() => (currentPage - 1) * 3 + 3, [currentPage]);
 
   const [usersOnPage, setUsersOnPage] = useState(
     usersList.slice(0, endUserIndex)
@@ -78,24 +68,8 @@ function Tweets() {
   }, []);
 
   useEffect(() => {
-    const newList = usersList.slice(startUserIndex, endUserIndex);
-
-    setUsersOnPage((prevState) => {
-      const filteredList = prevState.filter(
-        (item) => !newList.some((newItem) => newItem.id === item.id)
-      );
-
-      const combinedList = [...filteredList, ...newList];
-
-      const isSameState =
-        JSON.stringify(
-          combinedList.map((item) => item.id && item.following)
-        ) ===
-        JSON.stringify(prevState.map((item) => item.id && item.following));
-
-      return isSameState ? prevState : combinedList;
-    });
-  }, [usersList, startUserIndex, endUserIndex]);
+    setUsersOnPage(usersList.slice(0, endUserIndex));
+  }, [endUserIndex, usersList]);
 
   useEffect(() => {
     localStorage.setItem("currentPage", JSON.stringify(currentPage));
@@ -103,33 +77,12 @@ function Tweets() {
 
   return (
     <main>
-      <ButtonsContainer>
-        <p>Filter :</p>
-        <Button active="active" type="button" onClick={handleDropdownMenu}>
-          {select}
-        </Button>
-        {openMenu && (
-          <DropDownMenu>
-            {buttons.map((button) => {
-              return (
-                <li key={button}>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      handleDropdownMenu();
-                      dispatch(setFilter(button));
-                    }}
-                  >
-                    {button}
-                  </Button>
-                </li>
-              );
-            })}
-          </DropDownMenu>
-        )}
-      </ButtonsContainer>
       {followingUsers.length > 0 && !error && !loading && (
         <>
+          <DropDownMenu
+            handleDropdownMenu={handleDropdownMenu}
+            isOpen={openMenu}
+          />
           <List>
             {followingUsers.map(
               ({ id, following, avatar, tweets, followersCount }) => (
