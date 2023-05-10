@@ -4,7 +4,7 @@ This is a user card app where you can follow or unfollow a user and the follower
 
 This App [link](https://kristuwa.github.io/tweets-card/).
 
-Interface look as this
+Interface look as this {https://prnt.sc/doKmwDlh7mC0}
 
 # Features
 
