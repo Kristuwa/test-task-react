@@ -12,9 +12,9 @@ User cards display information about each user, including avatar, number of twee
 
 # Technologies
 
--React
--React Router for routing
--Redux
--Axios
--Styled Components
--UI service mockapi.io for creating a personal backend for development purposes
+- React,
+- React Router for routing,
+- Redux,
+- Axios,
+- Styled Components,
+- UI service mockapi.io for creating a personal backend for development purposes
