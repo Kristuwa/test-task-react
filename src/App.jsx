@@ -1,11 +1,11 @@
-import { theme } from "../../utils/theme";
+import { theme } from "./utils/theme";
 import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import { SharedLayout } from "../SharedLayout/SharedLayout";
+import { SharedLayout } from "./components/SharedLayout/SharedLayout";
 
-const Tweets = lazy(() => import("../../pages/Tweets/Tweets"));
-const Home = lazy(() => import("../../pages/Home/Home"));
+const Tweets = lazy(() => import("./pages/Tweets/Tweets"));
+const Home = lazy(() => import("./pages/Home/Home"));
 
 function App() {
   return (
