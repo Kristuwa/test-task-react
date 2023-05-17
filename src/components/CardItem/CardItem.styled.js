@@ -95,6 +95,7 @@ export const Button = styled.button`
 
   &:hover,
   &:focus {
-    background-color: ${(props) => props.theme.color.accentColor};
+    background-color: ${(props) =>
+      props.state ? props.theme.color.bgBtn : props.theme.color.accentColor};
   }
 `;

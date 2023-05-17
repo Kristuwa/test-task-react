@@ -25,9 +25,11 @@ export const BottomText = styled.p`
 `;
 
 export const ImageAvatar = styled.picture`
-  position: absolute;
-  top: -36px;
-  left: 150px;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 26px;
+  display: flex;
+  justify-content: center;
 `;
 
 export const CardContainer = styled.div`

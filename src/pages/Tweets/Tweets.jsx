@@ -1,15 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CardItem } from "../../components/CardItem/CardItem";
 import axios from "axios";
-import { List, LoadMore, Message } from "./Tweets.styled";
+import {
+  ButtonBack,
+  HeadContainer,
+  List,
+  LoadMore,
+  Message,
+} from "./Tweets.styled";
 import { useDispatch, useSelector } from "react-redux";
 import { getFilters, getUsers } from "../../redux/selectors";
 import { addUsers } from "../../redux/users/usersSlice";
-
+import { HiOutlineArrowCircleLeft } from "react-icons/hi";
 import { getFollowingUsers } from "../../helpers/function";
 import { DropDownMenu } from "../../components/DropDownMenu/DropDownMenu";
+import { useLocation } from "react-router-dom";
 
 function Tweets() {
+  const location = useLocation();
   const [currentPage, setCurrentPage] = useState(() => {
     const storage = JSON.parse(localStorage.getItem("currentPage"));
     return storage === null ? 1 : Number(storage);
@@ -75,14 +83,22 @@ function Tweets() {
     localStorage.setItem("currentPage", JSON.stringify(currentPage));
   }, [currentPage]);
 
+  const backLinkHref = location.state?.from ?? "/";
+
   return (
     <main>
       {followingUsers.length > 0 && !error && !loading && (
         <>
-          <DropDownMenu
-            handleDropdownMenu={handleDropdownMenu}
-            isOpen={openMenu}
-          />
+          <HeadContainer>
+            <ButtonBack to={backLinkHref}>
+              <HiOutlineArrowCircleLeft /> Back
+            </ButtonBack>
+            <DropDownMenu
+              handleDropdownMenu={handleDropdownMenu}
+              isOpen={openMenu}
+            />
+          </HeadContainer>
+
           <List>
             {followingUsers.map(
               ({ id, following, avatar, tweets, followersCount }) => (

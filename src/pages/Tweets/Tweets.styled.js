@@ -1,4 +1,35 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+
+export const HeadContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const ButtonBack = styled(Link)`
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  border: none;
+  background-color: transparent;
+  color: ${(props) => props.theme.color.secondaryColor};
+
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.2;
+  text-decoration: none;
+
+  transition: color 250ms linear;
+
+  &:hover,
+  &:focus {
+    color: ${(props) => props.theme.color.accentColor};
+  }
+`;
 
 export const List = styled.ul`
   display: flex;
